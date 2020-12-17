@@ -2,45 +2,33 @@ package pkmain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import entities.Acteur;
-import entities.Adresse;
-import entities.Categorie;
-import entities.Film;
-import entities.TacheDatee;
-import repositories.ActeurRepo;
-import repositories.CategorieRepo;
-import repositories.FilmRepo;
+import pkmain.entities.Acteur;
+import pkmain.entities.Adresse;
+import pkmain.entities.Categorie;
+import pkmain.entities.Film;
+import pkmain.entities.Producteur;
+import pkmain.entities.Realisateur;
+import pkmain.entities.Tache;
+import pkmain.entities.TacheDatee;
+import pkmain.managers.FilmManager;
 
-@EntityScan(basePackages = {"entities"})
-@EnableJpaRepositories("repositories")
 @SpringBootApplication
 @EnableTransactionManagement
 public class TheMain implements CommandLineRunner {
 	
-	@PersistenceContext
-	EntityManager em;
 	
-	CategorieRepo categorieRepo;
-	
-	ActeurRepo acteurRepo;
-	
-	FilmRepo filmRepo;
+	FilmManager filmManager;
 
-	public TheMain(CategorieRepo categorieRepo, ActeurRepo acteurRepo, FilmRepo filmRepo) {
-		this.categorieRepo = categorieRepo;
-		this.acteurRepo = acteurRepo;
-		this.filmRepo = filmRepo;
+	public TheMain(FilmManager filmManager) {
+		this.filmManager = filmManager;
 	}
 
 	public static void main(String[] args) {
@@ -74,20 +62,21 @@ public class TheMain implements CommandLineRunner {
 		Categorie categorie = new Categorie();
 		categorie.setDate_maj(LocalDateTime.now());
 		categorie.setNom("Thriller");
-		em.persist(categorie);
 		
 		Adresse ad = new Adresse();
 		ad.setCodePostal("34000");
 		ad.setLibelleRue("rue de la pelle");
 		ad.setNumeroRue(125);
 		ad.setVille("Montpellier");
-		em.persist(ad);
 		
 		TacheDatee tache = new TacheDatee();
 		tache.setDate(LocalDate.now());
 		tache.setDateEcheance(LocalDate.of(2020, 12, 18));
 		tache.setDescription("Prendre une pause");
-		em.persist(tache);
+		
+		Tache tache2 = new Tache();
+		tache2.setDate(LocalDate.now());
+		tache2.setDescription("Boire du café");
 		
 		Acteur acteur = new Acteur();
 		acteur.setNom("PORTMAN");
@@ -96,7 +85,7 @@ public class TheMain implements CommandLineRunner {
 		acteur.setAgence("ASK");
 		acteur.setSalaire(15000.00);
 		acteur.getTaches().add(tache);
-		em.persist(acteur);
+		acteur.getTaches().add(tache2);
 		
 		Acteur acteur2 = new Acteur();
 		acteur2.setNom("WEAVING");
@@ -105,7 +94,6 @@ public class TheMain implements CommandLineRunner {
 		acteur2.setAgence("ASK");
 		acteur2.setSalaire(15000.00);
 		acteur2.getTaches().add(tache);
-		em.persist(acteur2);
 		
 		Acteur acteur3 = new Acteur();
 		acteur3.setNom("REA");
@@ -113,17 +101,32 @@ public class TheMain implements CommandLineRunner {
 		acteur3.getAdresse().add(ad);
 		acteur3.setAgence("ASK");
 		acteur3.setSalaire(15000.00);
-		acteur3.getTaches().add(tache);
-		em.persist(acteur3);
+		acteur3.getTaches().add(tache2);
+		
+		Realisateur real = new Realisateur();
+		real.getAdresse().add(ad);
+		real.setCommission(1600.00);
+		real.setNom("BABA");
+		real.setPrenom("Helmut");
+		real.getTaches().add(tache2);
+		
+		Producteur prod = new Producteur();
+		prod.setBudget(10000000.0);
+		prod.getAdresse().add(ad);
+		prod.setNom("PRODO");
+		prod.setPrenom("Nelson");
 		
 		Film newFilm = new Film();
 		newFilm.setTitre("V pour Vendetta");
 		newFilm.setAnnee_sortie("2006");
 		newFilm.setCategorie(categorie);
-		em.persist(newFilm);
 		newFilm.getIntervenants().add(acteur);
 		newFilm.getIntervenants().add(acteur2);
 		newFilm.getIntervenants().add(acteur3);
+		newFilm.getIntervenants().add(real);
+		newFilm.getIntervenants().add(prod);
+		
+		filmManager.insertFilm(newFilm);
 		
 		
 		

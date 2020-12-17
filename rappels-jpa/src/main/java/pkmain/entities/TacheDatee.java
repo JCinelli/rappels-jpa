@@ -1,4 +1,4 @@
-package entities;
+package pkmain.entities;
 
 import java.time.LocalDate;
 
