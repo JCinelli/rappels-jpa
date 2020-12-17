@@ -30,12 +30,12 @@ public class Film {
 	private Categorie categorie;
 
 	@ManyToMany
-	@JoinTable(name = "film_acteur", joinColumns = @JoinColumn(name = "id_film", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_acteur", referencedColumnName = "id"))
-	private List<Acteur> acteurs;
+	@JoinTable(name = "film_intervenant", joinColumns = @JoinColumn(name = "id_film", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_intervenant", referencedColumnName = "id"))
+	private List<Intervenant> intervenants;
 
 //	CONSTRUCTORS
 	public Film() {
-		this.acteurs = new ArrayList<>();
+		this.intervenants = new ArrayList<>();
 	}
 
 //	METHODS
@@ -78,12 +78,12 @@ public class Film {
 		this.categorie = categorie;
 	}
 
-	public List<Acteur> getActeurs() {
-		return acteurs;
+	public List<Intervenant> getIntervenants() {
+		return intervenants;
 	}
 
-	public void setActeurs(List<Acteur> acteurs) {
-		this.acteurs = acteurs;
+	public void setIntervenants(List<Intervenant> intervenants) {
+		this.intervenants = intervenants;
 	}
 
 }
